@@ -1,0 +1,15 @@
+@import '../../variables/variables';
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  width: 384px;
+  height: 599px;
+  margin: 55px;
+  background-color: $background-color-base;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+}

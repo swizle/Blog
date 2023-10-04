@@ -1,18 +1,25 @@
 /* eslint-disable default-param-last */
 import {
-  TEST_ACTION,
+  GET_ARTICLES, SET_LOADING,
 } from './actions';
 
 const initialState = {
-  test: '',
+  articles: [],
+  loading: true,
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case TEST_ACTION:
+    case GET_ARTICLES:
       return {
         ...state,
-        test: action.payload,
+        articles: action.payload,
+      };
+
+    case SET_LOADING:
+      return {
+        ...state,
+        loading: action.payload,
       };
 
     default:

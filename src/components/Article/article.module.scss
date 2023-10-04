@@ -1,0 +1,100 @@
+@import '../../variables/variables';
+
+.container {
+  width: 938px;
+  height: 140px;
+  display: flex;
+  background-color: $background-color-base;
+  margin-top: 26px;
+  padding: 15px;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+}
+
+p {
+  font-size: 12px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  margin-left: 2px;
+}
+
+.title {
+  max-width: 180px;
+  font-size: 18px;
+  color: $info-color;
+  margin-right: 12px;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.likeCounter {
+  margin-left: 6px;
+}
+
+.tag {
+  margin-top: 6px;
+  margin-bottom: 4px;
+  border-color: $text-color-secondary;
+  border-width: 1.5px;
+  background-color: transparent;
+}
+
+.text {
+  width: 735px;
+  height: 40px;
+  padding-right: 100px;
+  margin-top: 4px;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile {
+  display: flex;
+}
+
+.profile2 {
+  margin-right: 12px;
+}
+
+.name {
+  width: 115px;
+  margin-top: 6px;
+  font-size: 18px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.date {
+  width: 115px;
+  margin-top: 2px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.icon {
+  width: 46px;
+  height: 46px;
+}
+
+.tagList {
+  max-width: 735px;
+  height: 33px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
@@ -7,32 +8,60 @@ import {
   Link,
 } from 'react-router-dom';
 
-import './app.scss';
+import { Button } from 'antd';
+import style from './app.module.scss';
 
-import { testAction } from '../../actions';
+import List from '../List';
+import ArticleBody from '../ArticleBody';
+import SignIn from '../SignIn';
+import SignUp from '../SignUp';
+
+import { fetchArticles } from '../../actions';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(testAction('work'));
+    dispatch(fetchArticles());
   }, [dispatch]);
 
   return (
     <Router>
-      <header>
-        <h1>Hello world!</h1>
+      <header className={style.header}>
+        <Link className={style.btnMain} to="/articles">Realworld Blog</Link>
+        <div className={style.btns}>
+          <Button className={style.btnSignIn} type="link"><Link to="/sign-in">Sign In</Link></Button>
+          <Button className={style.btnSignUp}><Link to="/sign-up">Sign Up</Link></Button>
+        </div>
       </header>
-      <main>
-        <section className="container">
-          <Link to="/test">Test</Link>
-          <Routes>
-            <Route
-              path="/test"
-              element={<h1>Work!</h1>}
-            />
-          </Routes>
-        </section>
+      <main className={style.main}>
+        <Routes>
+          <Route
+            path="/"
+            element={<List />}
+            exact
+          />
+          <Route
+            path="/articles"
+            element={<List />}
+            exact
+          />
+          <Route
+            path="/articles/:slug"
+            element={<ArticleBody />}
+            exact
+          />
+          <Route
+            path="/sign-in"
+            element={<SignIn />}
+            exact
+          />
+          <Route
+            path="/sign-up"
+            element={<SignUp />}
+            exact
+          />
+        </Routes>
       </main>
     </Router>
   );

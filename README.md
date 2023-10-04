@@ -1,4 +1,4 @@
-## Vercel adres: []
+## Vercel adres: [https://blog-eta-nine-65.vercel.app]
 npm i -g vercel, next config it
 
 ### `npm start`
