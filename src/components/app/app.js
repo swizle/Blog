@@ -5,34 +5,35 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
 } from 'react-router-dom';
 
-import { Button } from 'antd';
 import style from './app.module.scss';
 
+import Header from '../Header';
 import List from '../List';
 import ArticleBody from '../ArticleBody';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
+import Profile from '../Profile';
 
-import { fetchArticles } from '../../actions';
+import { fetchArticles, login } from '../../actions';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchArticles());
+
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      dispatch(login(storedUser));
+    }
   }, [dispatch]);
 
   return (
     <Router>
-      <header className={style.header}>
-        <Link className={style.btnMain} to="/articles">Realworld Blog</Link>
-        <div className={style.btns}>
-          <Button className={style.btnSignIn} type="link"><Link to="/sign-in">Sign In</Link></Button>
-          <Button className={style.btnSignUp}><Link to="/sign-up">Sign Up</Link></Button>
-        </div>
+      <header>
+        <Header />
       </header>
       <main className={style.main}>
         <Routes>
@@ -59,6 +60,11 @@ function App() {
           <Route
             path="/sign-up"
             element={<SignUp />}
+            exact
+          />
+          <Route
+            path="/profile"
+            element={<Profile />}
             exact
           />
         </Routes>

@@ -1,12 +1,85 @@
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { useForm, Controller } from 'react-hook-form';
+
+import { Input, Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 import style from './signIn.module.scss';
 
+import { login } from '../../actions';
+
 function SignIn() {
+  const dispatch = useDispatch();
+
+  const { control, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = async (data) => {
+    await axios.post('https://blog.kata.academy/api/users/login', {
+      user: {
+        email: data.email,
+        password: data.password,
+      },
+    })
+      .then((response) => {
+        dispatch(login(response.data.user));
+        console.log('Успешно вошли', response.data);
+      })
+      .catch((error) => {
+        console.error('Ошибка входа', error);
+      });
+  };
+
   return (
     <section className={style.mainContainer}>
-      <div className={style.container} />
+      <div className={style.container}>
+        <h3 className={style.title}>Sign In</h3>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <p className={`${style.email} ${style.text}`}>Email address</p>
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: true,
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: 'Invalid email address',
+              },
+            }}
+            render={({ field }) => (
+              <>
+                <Input {...field} className={`${style.inputEmail} ${style.input}`} placeholder="Email address" />
+                {errors.email && <p className={`${style.invalidText}`}>{errors.email && errors.email.message}</p>}
+              </>
+            )}
+          />
+
+          <p className={`${style.password} ${style.text}`}>Password</p>
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <>
+                <Input.Password {...field} className={`${style.inputPassword} ${style.input}`} placeholder="Password" />
+                {errors.password && <p className={`${style.invalidText}`}>Password is required</p>}
+              </>
+            )}
+          />
+
+          <Button className={style.btnLogin} type="primary" htmlType="submit">Login</Button>
+        </form>
+
+        <p className={style.dontHaveAcc}>
+          Dont have an account?
+          <Link className={style.link} to="/sign-up"> Sign Up.</Link>
+        </p>
+      </div>
     </section>
   );
 }

@@ -21,23 +21,6 @@ function List() {
     return articles.slice(startIndex, endIndex);
   };
 
-  const fetchArticlesFromServer = async (page) => {
-    try {
-      const response = await fetch(`/api/articles?page=${page}&pageSize=${articlesPerPage}`);
-      if (!response.ok) {
-        throw new Error('Не удалось загрузить статьи');
-      }
-      const data = await response.json();
-      // setArticles(data.articles);
-    } catch (error) {
-      console.error('Ошибка загрузки статей:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchArticlesFromServer(currentPage);
-  }, [currentPage]);
-
   return (
     <section className={style.container}>
       {loading ? (

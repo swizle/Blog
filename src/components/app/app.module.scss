@@ -17,26 +17,3 @@
 body {
   background-color: $backgroundColor;
 }
-
-.header {
-  height: 80px;
-  padding: 22px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: $background-color-base;
-}
-
-.btnMain {
-  text-decoration: none;
-}
-
-.btnSignIn {
-  margin-right: 12px;
-  color: $text-color;
-}
-
-.btnSignUp {
-  color: $success-color;
-  border-color: $success-color
-}

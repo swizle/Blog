@@ -1,0 +1,58 @@
+@import '../../variables/variables';
+
+.header {
+  height: 80px;
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $background-color-base;
+}
+
+.btnMain {
+  text-decoration: none;
+}
+
+.btnSignIn {
+  margin-right: 12px;
+  color: $text-color;
+}
+
+.btnSignUp {
+  color: $success-color;
+  border-color: $success-color
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-right: 26px;
+}
+
+.btnCreate {
+  margin-right: 13px;
+  color: $success-color;
+  border-color: $success-color
+}
+
+.name {
+  width: 115px;
+  margin-right: 13px;
+  font-size: 18px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.icon {
+  width: 46px;
+  height: 46px;
+  margin-right: 26px;
+}
+
+.btnLogOut {
+  color: $text-color;
+  border-color: $text-color;
+}

@@ -43,7 +43,7 @@ function ArticleBody() {
             </div>
             <div className={style.tagList}>
               {tagList.map((tag) => (
-                <Tag key={tag.id} className={style.tag}>{tag}</Tag>
+                <Tag key={tag} className={style.tag}>{tag}</Tag>
               ))}
             </div>
             <p className={style.text}>{description}</p>
