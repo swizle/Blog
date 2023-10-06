@@ -86,6 +86,10 @@ p {
   margin-right: 12px;
 }
 
+.profile3 {
+  margin-top: 12px;
+}
+
 .name {
   width: 115px;
   margin-top: 6px;
@@ -106,4 +110,15 @@ p {
 .icon {
   width: 46px;
   height: 46px;
+}
+
+.btnDelete {
+  color: red;
+  border-color: red;
+  margin-right: 12px;
+}
+
+.btnEdit {
+  color: $success-color;
+  border-color: $success-color;
 }

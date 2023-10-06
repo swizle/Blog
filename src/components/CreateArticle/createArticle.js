@@ -8,6 +8,8 @@ import { Input, Button } from 'antd';
 
 import style from './createArticle.module.scss';
 
+const { TextArea } = Input;
+
 function CreateArticle() {
   const {
     control, handleSubmit, formState: { errors },
@@ -117,7 +119,17 @@ function CreateArticle() {
             }}
             render={({ field }) => (
               <>
-                <Input {...field} className={`${style.inputBody} ${style.input}`} placeholder="Text" />
+                <TextArea
+                  {...field}
+                  showCount
+                  maxLength={4000}
+                  style={{
+                    height: 200,
+                    resize: 'none',
+                    marginBottom: '12px',
+                  }}
+                  placeholder="Text"
+                />
                 <p className={`${style.invalidText}`}>{errors.body && errors.body.message}</p>
               </>
             )}

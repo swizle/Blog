@@ -1,30 +1,54 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 
-import { Input, Checkbox, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Input, Button } from 'antd';
 
 import style from './editArticle.module.scss';
 
+const { TextArea } = Input;
+
 function EditArticle() {
   const {
-    control, handleSubmit, formState: { errors }, getValues,
+    control, handleSubmit, formState: { errors },
   } = useForm();
+
+  const { slug } = useParams();
+
+  const article = useSelector((state) => {
+    const { articles } = state;
+
+    const foundArticle = articles.find((article2) => article2.slug === slug);
+
+    return foundArticle;
+  });
+
+  const {
+    title,
+    description,
+    body,
+  } = article;
+
+  const user = useSelector((state) => state.user);
+  const [tags, setTags] = useState([{ id: 0, value: '' }]);
 
   const onSubmit = async (data) => {
     try {
-      const userData = {
-        user: {
-          username: data.username,
-          email: data.email,
-          password: data.password,
+      const articleData = {
+        article: {
+          title: data.title,
+          description: data.description,
+          body: data.body,
+          tagList: tags.map((tag) => tag.value),
         },
       };
 
-      const response = await axios.post('https://blog.kata.academy/api/users', userData, {
+      const response = await axios.put(`https://blog.kata.academy/api/articles/${slug}`, articleData, {
         headers: {
+          Authorization: `Token ${user.token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -35,123 +59,137 @@ function EditArticle() {
     }
   };
 
+  const handleAddTag = () => {
+    const newTag = { id: tags.length, value: '' };
+    setTags([...tags, newTag]);
+  };
+
+  const handleDeleteTag = (id) => {
+    const updatedTags = [...tags];
+    updatedTags.splice(id, 1);
+    setTags(updatedTags);
+    console.log(tags.map((tag) => tag.value));
+  };
+
+  const handleUpdateTag = (id, value) => {
+    const updatedTags = [...tags];
+
+    updatedTags[id].value = value;
+    setTags(updatedTags);
+
+    console.log(tags.map((tag) => tag.value));
+  };
+
   return (
     <section className={style.mainContainer}>
       <div className={style.container}>
-        <h3 className={style.title}>Create new account</h3>
+        <h3 className={style.title}>Edit article</h3>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p className={`${style.username} ${style.text}`}>Username</p>
+          <p className={`${style.titleArticle} ${style.text}`}>Title</p>
           <Controller
-            name="username"
+            name="title"
             control={control}
-            defaultValue=""
+            defaultValue={title}
             rules={{
-              required: 'Username is required',
+              required: 'Title is required',
               minLength: {
                 value: 3,
-                message: 'Username must be at least 3 characters',
+                message: 'Title must be at least 3 characters',
               },
               maxLength: {
                 value: 20,
-                message: 'Username must be at most 20 characters',
+                message: 'Title must be at most 20 characters',
               },
             }}
             render={({ field }) => (
               <>
-                <Input {...field} className={`${style.inputUsername} ${style.input}`} placeholder="Username" />
-                <p className={`${style.invalidText}`}>{errors.username && errors.username.message}</p>
+                <Input {...field} className={`${style.inputTitle} ${style.input}`} placeholder="Title" />
+                <p className={`${style.invalidText}`}>{errors.title && errors.title.message}</p>
               </>
             )}
           />
 
-          <p className={`${style.email} ${style.text}`}>Email address</p>
+          <p className={`${style.email} ${style.text}`}>Short description</p>
           <Controller
-            name="email"
+            name="description"
             control={control}
-            defaultValue=""
+            defaultValue={description}
             rules={{
-              required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: 'Invalid email address',
-              },
+              required: 'Short description is required',
             }}
             render={({ field }) => (
               <>
-                <Input {...field} className={`${style.inputEmail} ${style.input}`} placeholder="Email address" />
-                <p className={`${style.invalidText}`}>{errors.email && errors.email.message}</p>
+                <Input {...field} className={`${style.inputDescription} ${style.input}`} placeholder="Short description" />
+                <p className={`${style.invalidText}`}>{errors.description && errors.description.message}</p>
               </>
             )}
           />
 
-          <p className={`${style.password} ${style.text}`}>Password</p>
+          <p className={`${style.text}`}>Text</p>
           <Controller
-            name="password"
+            name="body"
             control={control}
-            defaultValue=""
+            defaultValue={body}
             rules={{
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters',
-              },
-              maxLength: {
-                value: 40,
-                message: 'Password must be at most 40 characters',
-              },
+              required: 'Text is required',
             }}
             render={({ field }) => (
               <>
-                <Input.Password {...field} className={`${style.inputPassword} ${style.input}`} placeholder="Password" />
-                <p className={`${style.invalidText}`}>{errors.password && errors.password.message}</p>
+                <TextArea
+                  {...field}
+                  showCount
+                  maxLength={4000}
+                  style={{
+                    height: 200,
+                    resize: 'none',
+                    marginBottom: '12px',
+                  }}
+                  placeholder="Text"
+                />
+                <p className={`${style.invalidText}`}>{errors.body && errors.body.message}</p>
               </>
             )}
           />
 
-          <p className={`${style.repPassword} ${style.text}`}>Repeat password</p>
-          <Controller
-            name="repeatPassword"
-            control={control}
-            defaultValue=""
-            rules={{
-              required: 'Repeat password is required',
-              validate: (value) => value === getValues('password') || 'Passwords must match',
-            }}
-            render={({ field }) => (
-              <>
-                <Input.Password {...field} className={`${style.inputRepPassword} ${style.input}`} placeholder="Repeat password" />
-                <p className={`${style.invalidText}`}>{errors.repeatPassword && errors.repeatPassword.message}</p>
-              </>
-            )}
-          />
+          <p className={`${style.tags} ${style.text}`}>Tags</p>
+          {tags.map((tag, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={index} className={style.tagContainer}>
+              <Controller
+                name={`tags[${index}]`}
+                control={control}
+                defaultValue=""
+                rules={{
+                  required: 'Tag is required',
+                }}
+                render={({ field }) => (
+                  <>
+                    <Input
+                      {...field}
+                      className={`${style.inputTag} ${style.input}`}
+                      placeholder="Tag"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleUpdateTag(index, e.target.value);
+                      }}
+                    />
+                    <Button
+                      className={style.btnDelete}
+                      onClick={() => handleDeleteTag(index)}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
+              />
+              <p className={`${style.invalidText}`}>{errors[`tags[${index}]`] && errors[`tags[${index}]`].message}</p>
+            </div>
+          ))}
+          <Button className={style.btnAdd} onClick={handleAddTag}>Add tag</Button>
 
-          <div className={style.rectangle} />
-          <Controller
-            name="agreement"
-            control={control}
-            defaultValue={false}
-            rules={{ required: 'You must agree to the processing of your personal information' }}
-            render={({ field }) => (
-              <>
-                <p className={style.agreeInfo}>
-                  <Checkbox {...field} />
-                  {' '}
-                  I agree to the processing of my personal
-                  information.
-                </p>
-                <p className={`${style.invalidText}`}>{errors.agreement && errors.agreement.message}</p>
-              </>
-            )}
-          />
-
-          <Button className={style.btnCreate} type="primary" htmlType="submit">Create</Button>
+          <Button className={style.btnSend} type="primary" htmlType="submit">Send</Button>
         </form>
-
-        <p className={style.alreadyHaveAcc}>
-          Already have an account?
-          <Link className={style.link} to="/sign-in"> Sign In.</Link>
-        </p>
       </div>
     </section>
   );
