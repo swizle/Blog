@@ -24,7 +24,7 @@ function Header() {
       <div className={style.btns}>
         {user ? (
           <div className={style.profile}>
-            <Button className={style.btnCreate}><Link to="/">Create article</Link></Button>
+            <Button className={style.btnCreate}><Link to="/new-article">Create article</Link></Button>
             <Link className={style.name} to="/profile">{user.username}</Link>
             <Avatar className={style.icon} icon={<img src={user.image} alt="profile" />} />
             <Button className={style.btnLogOut} onClick={handleLogout}><Link to="/">Log Out</Link></Button>

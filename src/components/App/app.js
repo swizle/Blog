@@ -12,6 +12,8 @@ import style from './app.module.scss';
 import Header from '../Header';
 import List from '../List';
 import ArticleBody from '../ArticleBody';
+import CreateArticle from '../CreateArticle';
+import EditArticle from '../EditArticle';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Profile from '../Profile';
@@ -50,6 +52,16 @@ function App() {
           <Route
             path="/articles/:slug"
             element={<ArticleBody />}
+            exact
+          />
+          <Route
+            path="/new-article"
+            element={<CreateArticle />}
+            exact
+          />
+          <Route
+            path="/articles/:slug/edit"
+            element={<EditArticle />}
             exact
           />
           <Route
