@@ -1,14 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { Pagination, Spin } from 'antd';
 import style from './list.module.scss';
 import './list.scss';
 
 import Article from '../Article';
+import { fetchArticles } from '../../actions';
 
 function List() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 5;
 
@@ -19,6 +23,17 @@ function List() {
     const startIndex = (currentPage - 1) * articlesPerPage;
     const endIndex = startIndex + articlesPerPage;
     return articles.slice(startIndex, endIndex);
+  };
+
+  const handlePage = (page) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      dispatch(fetchArticles(storedUser.token));
+    } else {
+      dispatch(fetchArticles());
+    }
+
+    setCurrentPage(page);
   };
 
   return (
@@ -37,7 +52,7 @@ function List() {
             total={articles.length}
             pageSize={articlesPerPage}
             showSizeChanger={false}
-            onChange={(page) => setCurrentPage(page)}
+            onChange={(page) => handlePage(page)}
           />
         </>
       )}
