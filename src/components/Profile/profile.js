@@ -1,13 +1,15 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Input, Button } from 'antd';
 import { useForm, Controller } from 'react-hook-form';
 
 import style from './profile.module.scss';
+import { fetchArticles, login } from '../../actions';
 
 function Profile() {
+  const dispatch = useDispatch();
   const { control, handleSubmit, formState: { errors } } = useForm();
 
   const user = useSelector((state) => state.user);
@@ -29,7 +31,8 @@ function Profile() {
           'Content-Type': 'application/json',
         },
       });
-
+      dispatch(login(response.data.user));
+      dispatch(fetchArticles(response.data.user.token));
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);

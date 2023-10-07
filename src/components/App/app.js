@@ -64,14 +64,20 @@ function App() {
               user ? (
                 <CreateArticle />
               ) : (
-                <Navigate to="/sign-in" />
+                <Navigate to="/articles" />
               )
             }
             exact
           />
           <Route
             path="/articles/:slug/edit"
-            element={<EditArticle />}
+            element={
+              user ? (
+                <EditArticle />
+              ) : (
+                <Navigate to="/articles" />
+              )
+            }
             exact
           />
           <Route
@@ -86,7 +92,13 @@ function App() {
           />
           <Route
             path="/profile"
-            element={<Profile />}
+            element={
+              user ? (
+                <Profile />
+              ) : (
+                <Navigate to="/articles" />
+              )
+            }
             exact
           />
         </Routes>

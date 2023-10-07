@@ -28,7 +28,7 @@ export const fetchArticles = (userToken) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     if (userToken) {
-      const response = await axios.get('https://blog.kata.academy/api/articles?limit=100', {}, {
+      const response = await axios.get('https://blog.kata.academy/api/articles?limit=100', {
         headers: {
           Authorization: `Token ${userToken}`,
         },

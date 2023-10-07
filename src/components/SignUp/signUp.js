@@ -6,9 +6,12 @@ import { useForm, Controller } from 'react-hook-form';
 import { Input, Checkbox, Button } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { useDispatch } from 'react-redux';
 import style from './signUp.module.scss';
+import { login } from '../../actions';
 
 function SignUp() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const {
@@ -30,6 +33,7 @@ function SignUp() {
           'Content-Type': 'application/json',
         },
       });
+      dispatch(login(response.data.user));
       navigate('/articles');
       console.log('Успешно отправлено:', response.data);
     } catch (error) {

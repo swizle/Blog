@@ -40,7 +40,7 @@ const reducer = (state = initialState, action) => {
       try {
         localStorage.setItem('user', null);
       } catch (error) {
-        console.error('Error saving user data to localStorage:', error);
+        console.error('Error remove user data to localStorage:', error);
       }
 
       return {
