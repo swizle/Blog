@@ -5,14 +5,15 @@ import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 
 import { Input, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import style from './signIn.module.scss';
 
-import { login } from '../../actions';
+import { login, fetchArticles } from '../../actions';
 
 function SignIn() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm();
 
@@ -25,7 +26,8 @@ function SignIn() {
     })
       .then((response) => {
         dispatch(login(response.data.user));
-        console.log('Успешно вошли', response.data);
+        dispatch(fetchArticles(response.data.user.token));
+        navigate('/articles');
       })
       .catch((error) => {
         console.error('Ошибка входа', error);

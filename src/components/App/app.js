@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Link,
+  Navigate,
 } from 'react-router-dom';
 
 import style from './app.module.scss';
@@ -22,13 +24,15 @@ import { fetchArticles, login } from '../../actions';
 
 function App() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(fetchArticles());
-
     const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
       dispatch(login(storedUser));
+      dispatch(fetchArticles(storedUser.token));
+    } else {
+      dispatch(fetchArticles());
     }
   }, [dispatch]);
 
@@ -56,7 +60,13 @@ function App() {
           />
           <Route
             path="/new-article"
-            element={<CreateArticle />}
+            element={
+              user ? (
+                <CreateArticle />
+              ) : (
+                <Navigate to="/sign-in" />
+              )
+            }
             exact
           />
           <Route

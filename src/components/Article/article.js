@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import axios from 'axios';
 
@@ -9,9 +9,12 @@ import { HeartOutlined } from '@ant-design/icons';
 import { Avatar, Tag, Button } from 'antd';
 
 import style from './article.module.scss';
+import { fetchArticles } from '../../actions';
 
 function Article({ article }) {
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     slug,
@@ -25,13 +28,35 @@ function Article({ article }) {
 
   const onClickHandler = async () => {
     try {
-      const response = await axios.post(`https://blog.kata.academy/api/articles/${slug}/favorite`, {}, {
-        headers: {
-          Authorization: `Token ${user.token}`,
-        },
-      });
-
-      console.log('Успешно отправлено:', response.data);
+      if (article.favorited) {
+        const response = await axios.delete(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
+          headers: {
+            Authorization: `Token ${user.token}`,
+          },
+        });
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+          dispatch(fetchArticles(storedUser.token));
+        } else {
+          dispatch(fetchArticles());
+        }
+        navigate('/articles');
+        console.log('Успешно отправлено:', response.data);
+      } else {
+        const response = await axios.post(`https://blog.kata.academy/api/articles/${slug}/favorite`, {}, {
+          headers: {
+            Authorization: `Token ${user.token}`,
+          },
+        });
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+          dispatch(fetchArticles(storedUser.token));
+        } else {
+          dispatch(fetchArticles());
+        }
+        navigate('/articles');
+        console.log('Успешно отправлено:', response.data);
+      }
     } catch (error) {
       console.error('Ошибка при отправке:', error);
     }

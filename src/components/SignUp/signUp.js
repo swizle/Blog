@@ -4,11 +4,13 @@ import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 
 import { Input, Checkbox, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import style from './signUp.module.scss';
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const {
     control, handleSubmit, formState: { errors }, getValues,
   } = useForm();
@@ -28,7 +30,7 @@ function SignUp() {
           'Content-Type': 'application/json',
         },
       });
-
+      navigate('/articles');
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);

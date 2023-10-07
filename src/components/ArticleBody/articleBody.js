@@ -1,8 +1,8 @@
 /* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Markdown from 'react-markdown';
 import axios from 'axios';
 
@@ -12,8 +12,11 @@ import {
 } from 'antd';
 
 import style from './articleBody.module.scss';
+import { fetchArticles } from '../../actions';
 
 function ArticleBody() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const { slug } = useParams();
 
@@ -44,6 +47,13 @@ function ArticleBody() {
         },
       });
 
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        dispatch(fetchArticles(storedUser.token));
+      } else {
+        dispatch(fetchArticles());
+      }
+      navigate('/articles');
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);

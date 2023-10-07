@@ -1,12 +1,11 @@
 /* eslint-disable default-param-last */
 import {
-  GET_ARTICLES, SET_LOADING, SET_AUTHORISED, LOGIN, LOGOUT,
+  GET_ARTICLES, SET_LOADING, LOGIN, LOGOUT,
 } from './actions';
 
 const initialState = {
   articles: [],
   loading: true,
-  isAuthorised: false,
   user: null,
 };
 
@@ -22,12 +21,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loading: action.payload,
-      };
-
-    case SET_AUTHORISED:
-      return {
-        ...state,
-        isAuthorised: action.payload,
       };
 
     case LOGIN:

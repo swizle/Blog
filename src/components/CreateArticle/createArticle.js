@@ -1,16 +1,20 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 
 import { Input, Button } from 'antd';
 
+import { useNavigate } from 'react-router-dom';
 import style from './createArticle.module.scss';
+import { fetchArticles } from '../../actions';
 
 const { TextArea } = Input;
 
 function CreateArticle() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     control, handleSubmit, formState: { errors },
   } = useForm();
@@ -36,6 +40,13 @@ function CreateArticle() {
         },
       });
 
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        dispatch(fetchArticles(storedUser.token));
+      } else {
+        dispatch(fetchArticles());
+      }
+      navigate('/articles');
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);

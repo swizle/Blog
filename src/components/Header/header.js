@@ -4,18 +4,21 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { Button, Avatar } from 'antd';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import style from './header.module.scss';
 
-import { logout } from '../../actions';
+import { logout, fetchArticles } from '../../actions';
 
 function Header() {
   const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(fetchArticles());
+    navigate('/articles');
   };
 
   return (
