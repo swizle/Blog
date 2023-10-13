@@ -13,7 +13,7 @@ import style from './article.module.scss';
 import { fetchArticles } from '../../actions';
 
 function Article({ article }) {
-  const { user } = useSelector((state) => state);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);

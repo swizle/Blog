@@ -13,7 +13,8 @@ function List() {
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 5;
 
-  const { articles, loading } = useSelector((state) => state);
+  const articles = useSelector((state) => state.articles);
+  const loading = useSelector((state) => state.loading);
 
   const displayArticles = () => {
     const startIndex = (currentPage - 1) * articlesPerPage;

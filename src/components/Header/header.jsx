@@ -7,7 +7,7 @@ import style from './header.module.scss';
 import { logout, fetchArticles } from '../../actions';
 
 function Header() {
-  const { user } = useSelector((state) => state);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

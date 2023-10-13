@@ -1,10 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button } from 'antd';
+import { Input, Button, message } from 'antd';
 import { v4 } from 'uuid';
 
 import style from './newArticle.module.scss';
@@ -16,7 +15,9 @@ const { TextArea } = Input;
 function NewArticle({ action }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const {
+    control, handleSubmit, formState: { errors }, setValue,
+  } = useForm();
   const { slug } = useParams();
   const user = useSelector((state) => state.user);
 
@@ -39,6 +40,11 @@ function NewArticle({ action }) {
   }, [article]);
 
   const onSubmit = async (data) => {
+    if (tags.some((tag) => !tag.value.trim())) {
+      message.error('Some tags are empty');
+      return;
+    }
+
     try {
       const articleData = {
         article: {
@@ -81,6 +87,7 @@ function NewArticle({ action }) {
   const handleDeleteTag = (id) => {
     const updatedTags = tags.filter((tag) => tag.id !== id);
     setTags(updatedTags);
+    setValue(`tags[${id}]`, '');
   };
 
   const handleUpdateTag = (id, value) => {
@@ -112,7 +119,13 @@ function NewArticle({ action }) {
             }}
             render={({ field }) => (
               <>
-                <Input {...field} className={`${style.inputTitle} ${style.input}`} placeholder="Title" />
+                <Input
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  className={`${style.inputTitle} ${style.input}`}
+                  placeholder="Title"
+                />
                 <p className={`${style.invalidText}`}>{errors.title && errors.title.message}</p>
               </>
             )}
@@ -127,7 +140,13 @@ function NewArticle({ action }) {
             }}
             render={({ field }) => (
               <>
-                <Input {...field} className={`${style.inputDescription} ${style.input}`} placeholder="Short description" />
+                <Input
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  className={`${style.inputDescription} ${style.input}`}
+                  placeholder="Short description"
+                />
                 <p className={`${style.invalidText}`}>{errors.description && errors.description.message}</p>
               </>
             )}
@@ -143,7 +162,9 @@ function NewArticle({ action }) {
             render={({ field }) => (
               <>
                 <TextArea
-                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                   showCount
                   maxLength={4000}
                   style={{
@@ -159,10 +180,9 @@ function NewArticle({ action }) {
           />
           <p className={`${style.tags} ${style.text}`}>Tags</p>
           {tags.map((tag, index) => (
-            // eslint-disable-next-line react/no-array-index-key
             <div key={tag.id} className={style.tagContainer}>
               <Controller
-                name={`tags[${index}]`}
+                name={tag.id}
                 control={control}
                 defaultValue={tag.value}
                 rules={{
@@ -171,7 +191,8 @@ function NewArticle({ action }) {
                 render={({ field }) => (
                   <>
                     <Input
-                      {...field}
+                      value={field.value}
+                      onBlur={field.onBlur}
                       className={`${style.inputTag} ${style.input}`}
                       placeholder="Tag"
                       onChange={(e) => {
