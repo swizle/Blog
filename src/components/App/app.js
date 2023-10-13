@@ -14,8 +14,7 @@ import style from './app.module.scss';
 import Header from '../Header';
 import List from '../List';
 import ArticleBody from '../ArticleBody';
-import CreateArticle from '../CreateArticle';
-import EditArticle from '../EditArticle';
+import NewArticle from '../NewArticle';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import Profile from '../Profile';
@@ -62,7 +61,7 @@ function App() {
             path="/new-article"
             element={
               user ? (
-                <CreateArticle />
+                <NewArticle action="create" />
               ) : (
                 <Navigate to="/articles" />
               )
@@ -73,7 +72,7 @@ function App() {
             path="/articles/:slug/edit"
             element={
               user ? (
-                <EditArticle />
+                <NewArticle action="edit" />
               ) : (
                 <Navigate to="/articles" />
               )

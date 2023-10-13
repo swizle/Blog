@@ -1,42 +1,42 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-
+import { useParams, useNavigate } from 'react-router-dom';
 import { Input, Button } from 'antd';
+import { v4 } from 'uuid';
 
-import style from './editArticle.module.scss';
+import style from './newArticle.module.scss';
+
 import { fetchArticles } from '../../actions';
 
 const { TextArea } = Input;
 
-function EditArticle() {
+function NewArticle({ action }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    control, handleSubmit, formState: { errors },
-  } = useForm();
-
+  const { control, handleSubmit, formState: { errors } } = useForm();
   const { slug } = useParams();
+  const user = useSelector((state) => state.user);
+
+  const isEditForm = action === 'edit';
 
   const article = useSelector((state) => {
     const { articles } = state;
-
     const foundArticle = articles.find((article2) => article2.slug === slug);
-
     return foundArticle;
   });
 
-  const {
-    title,
-    description,
-    body,
-  } = article;
+  const [tags, setTags] = useState([]);
 
-  const user = useSelector((state) => state.user);
-  const [tags, setTags] = useState([{ id: 0, value: '' }]);
+  const { title, description, body } = article || {};
+
+  useEffect(() => {
+    if (article && article.tagList) {
+      setTags(article.tagList.map((tag) => ({ id: v4(), value: tag })));
+    }
+  }, [article]);
 
   const onSubmit = async (data) => {
     try {
@@ -49,7 +49,11 @@ function EditArticle() {
         },
       };
 
-      const response = await axios.put(`https://blog.kata.academy/api/articles/${slug}`, articleData, {
+      const url = isEditForm ? `https://blog.kata.academy/api/articles/${slug}` : 'https://blog.kata.academy/api/articles';
+
+      const method = isEditForm ? 'put' : 'post';
+
+      const response = await axios[method](url, articleData, {
         headers: {
           Authorization: `Token ${user.token}`,
           'Content-Type': 'application/json',
@@ -62,7 +66,12 @@ function EditArticle() {
       } else {
         dispatch(fetchArticles());
       }
-      navigate(`/articles/${slug}`);
+
+      if (isEditForm) {
+        navigate(`/articles/${slug}`);
+      } else {
+        navigate('/articles');
+      }
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);
@@ -70,37 +79,32 @@ function EditArticle() {
   };
 
   const handleAddTag = () => {
-    const newTag = { id: tags.length, value: '' };
-    setTags([...tags, newTag]);
+    const newTag = { id: v4(), value: '' };
+    const updatedTags = [...tags, newTag];
+    setTags([...updatedTags]);
   };
 
   const handleDeleteTag = (id) => {
-    const updatedTags = [...tags];
-    updatedTags.splice(id, 1);
+    const updatedTags = tags.filter((tag) => tag.id !== id);
     setTags(updatedTags);
-    console.log(tags.map((tag) => tag.value));
   };
 
   const handleUpdateTag = (id, value) => {
     const updatedTags = [...tags];
-
     updatedTags[id].value = value;
     setTags(updatedTags);
-
-    console.log(tags.map((tag) => tag.value));
   };
 
   return (
     <section className={style.mainContainer}>
       <div className={style.container}>
-        <h3 className={style.title}>Edit article</h3>
-
+        <h3 className={style.title}>{isEditForm ? 'Edit article' : 'Create new article'}</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
           <p className={`${style.titleArticle} ${style.text}`}>Title</p>
           <Controller
             name="title"
             control={control}
-            defaultValue={title}
+            defaultValue={title || ''}
             rules={{
               required: 'Title is required',
               minLength: {
@@ -119,12 +123,11 @@ function EditArticle() {
               </>
             )}
           />
-
           <p className={`${style.email} ${style.text}`}>Short description</p>
           <Controller
             name="description"
             control={control}
-            defaultValue={description}
+            defaultValue={description || ''}
             rules={{
               required: 'Short description is required',
             }}
@@ -135,12 +138,11 @@ function EditArticle() {
               </>
             )}
           />
-
           <p className={`${style.text}`}>Text</p>
           <Controller
             name="body"
             control={control}
-            defaultValue={body}
+            defaultValue={body || ''}
             rules={{
               required: 'Text is required',
             }}
@@ -161,15 +163,14 @@ function EditArticle() {
               </>
             )}
           />
-
           <p className={`${style.tags} ${style.text}`}>Tags</p>
           {tags.map((tag, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <div key={index} className={style.tagContainer}>
+            <div key={tag.id} className={style.tagContainer}>
               <Controller
                 name={`tags[${index}]`}
                 control={control}
-                defaultValue=""
+                defaultValue={tag.value}
                 rules={{
                   required: 'Tag is required',
                 }}
@@ -186,7 +187,7 @@ function EditArticle() {
                     />
                     <Button
                       className={style.btnDelete}
-                      onClick={() => handleDeleteTag(index)}
+                      onClick={() => handleDeleteTag(tag.id)}
                     >
                       Delete
                     </Button>
@@ -197,12 +198,13 @@ function EditArticle() {
             </div>
           ))}
           <Button className={style.btnAdd} onClick={handleAddTag}>Add tag</Button>
-
-          <Button className={style.btnSend} type="primary" htmlType="submit">Send</Button>
+          <Button className={style.btnSend} type="primary" htmlType="submit">
+            {isEditForm ? 'Save' : 'Send'}
+          </Button>
         </form>
       </div>
     </section>
   );
 }
 
-export default EditArticle;
+export default NewArticle;

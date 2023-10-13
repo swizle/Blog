@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Input, Button } from 'antd';
@@ -10,7 +10,9 @@ import { fetchArticles, login } from '../../actions';
 
 function Profile() {
   const dispatch = useDispatch();
+
   const { control, handleSubmit, formState: { errors } } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector((state) => state.user);
 
@@ -25,6 +27,7 @@ function Profile() {
         },
       };
 
+      setIsLoading(true);
       const response = await axios.put('https://blog.kata.academy/api/user', userData, {
         headers: {
           Authorization: `Token ${user.token}`,
@@ -33,6 +36,7 @@ function Profile() {
       });
       dispatch(login(response.data.user));
       dispatch(fetchArticles(response.data.user.token));
+      setIsLoading(false);
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
       console.error('Ошибка при отправке:', error);
@@ -146,7 +150,7 @@ function Profile() {
             )}
           />
 
-          <Button className={style.btnSave} type="primary" htmlType="submit">
+          <Button className={style.btnSave} type="primary" htmlType="submit" loading={isLoading}>
             Save
           </Button>
         </form>

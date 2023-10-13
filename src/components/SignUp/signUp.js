@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -18,6 +18,8 @@ function SignUp() {
     control, handleSubmit, formState: { errors }, getValues,
   } = useForm();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async (data) => {
     try {
       const userData = {
@@ -28,12 +30,14 @@ function SignUp() {
         },
       };
 
+      setIsLoading(true);
       const response = await axios.post('https://blog.kata.academy/api/users', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
       dispatch(login(response.data.user));
+      setIsLoading(false);
       navigate('/articles');
       console.log('Успешно отправлено:', response.data);
     } catch (error) {
@@ -151,7 +155,7 @@ function SignUp() {
             )}
           />
 
-          <Button className={style.btnCreate} type="primary" htmlType="submit">Create</Button>
+          <Button className={style.btnCreate} type="primary" htmlType="submit" loading={isLoading}>Create</Button>
         </form>
 
         <p className={style.alreadyHaveAcc}>

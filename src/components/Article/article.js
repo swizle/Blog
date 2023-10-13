@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -15,6 +15,7 @@ function Article({ article }) {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     slug,
@@ -28,6 +29,7 @@ function Article({ article }) {
 
   const onClickHandler = async () => {
     try {
+      setIsLoading(true);
       if (article.favorited) {
         const response = await axios.delete(`https://blog.kata.academy/api/articles/${slug}/favorite`, {
           headers: {
@@ -40,6 +42,7 @@ function Article({ article }) {
         } else {
           dispatch(fetchArticles());
         }
+        setIsLoading(false);
         navigate('/articles');
         console.log('Успешно отправлено:', response.data);
       } else {
@@ -54,6 +57,7 @@ function Article({ article }) {
         } else {
           dispatch(fetchArticles());
         }
+        setIsLoading(false);
         navigate('/articles');
         console.log('Успешно отправлено:', response.data);
       }
@@ -79,6 +83,7 @@ function Article({ article }) {
                   <HeartOutlined />
                 )
             }
+            loading={isLoading}
             onClick={onClickHandler}
           />
           <p className={style.likeCounter}>{favoritesCount}</p>

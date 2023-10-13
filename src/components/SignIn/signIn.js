@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
@@ -16,8 +16,10 @@ function SignIn() {
   const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     await axios.post('https://blog.kata.academy/api/users/login', {
       user: {
         email: data.email,
@@ -27,6 +29,7 @@ function SignIn() {
       .then((response) => {
         dispatch(login(response.data.user));
         dispatch(fetchArticles(response.data.user.token));
+        setIsLoading(false);
         navigate('/articles');
       })
       .catch((error) => {
@@ -46,7 +49,7 @@ function SignIn() {
             control={control}
             defaultValue=""
             rules={{
-              required: true,
+              required: 'Email is required',
               pattern: {
                 value: /\S+@\S+\.\S+/,
                 message: 'Invalid email address',
@@ -74,7 +77,7 @@ function SignIn() {
             )}
           />
 
-          <Button className={style.btnLogin} type="primary" htmlType="submit">Login</Button>
+          <Button className={style.btnLogin} type="primary" htmlType="submit" loading={isLoading}>Login</Button>
         </form>
 
         <p className={style.dontHaveAcc}>
