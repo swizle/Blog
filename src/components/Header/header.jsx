@@ -31,7 +31,7 @@ function Header() {
             <Link className={style.name} to="/profile">
               {user.username}
             </Link>
-            <Avatar className={style.icon} icon={<img src={user.image} alt="profile" />} />
+            <Avatar className={style.icon} icon={<img src={user.image || 'https://static.productionready.io/images/smiley-cyrus.jpg'} alt="profile" />} />
             <Button className={style.btnLogOut} onClick={handleLogout}>
               <Link to="/">Log Out</Link>
             </Button>
