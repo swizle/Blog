@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -22,10 +21,7 @@ function ArticleBody() {
 
   const article = useSelector((state) => {
     const { articles } = state;
-
-    const foundArticle = articles.find((article2) => article2.slug === slug);
-
-    return foundArticle;
+    return articles.find((article2) => article2.slug === slug);
   });
 
   const onDeleteHandler = async () => {
@@ -37,21 +33,15 @@ function ArticleBody() {
         },
       });
 
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser) {
-        dispatch(fetchArticles(storedUser.token));
-      } else {
-        dispatch(fetchArticles());
-      }
+      dispatch(fetchArticles(user.token));
       navigate('/articles');
-      console.log('Успешно отправлено:', response.data);
+      console.log('Successfully sent:', response.data);
     } catch (error) {
-      console.error('Ошибка при отправке:', error);
+      console.error('Error sending:', error);
     }
   };
 
-  const confirm = (e) => {
-    console.log(e);
+  const confirm = () => {
     onDeleteHandler();
     message.success('Article deleted');
   };
@@ -65,9 +55,9 @@ function ArticleBody() {
         },
       });
 
-      console.log('Успешно отправлено:', response.data);
+      console.log('Successfully sent:', response.data);
     } catch (error) {
-      console.error('Ошибка при отправке:', error);
+      console.error('Error sending:', error);
     }
   };
 
@@ -100,16 +90,21 @@ function ArticleBody() {
                 </div>
                 <Avatar className={style.icon} icon={<img src={article.author.image} alt="profile" />} />
               </div>
-              <Popconfirm
-                title="Delete the task"
-                description="Are you sure to delete this task?"
-                onConfirm={confirm}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button className={style.btnDelete}>Delete</Button>
-              </Popconfirm>
-              <Button className={style.btnEdit}><Link to={`/articles/${slug}/edit`}>Edit</Link></Button>
+              {user?.username === article.author.username ? (
+                <>
+                  <Popconfirm
+                    title="Delete the task"
+                    description="Are you sure to delete this task?"
+                    onConfirm={confirm}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button className={style.btnDelete}>Delete</Button>
+                  </Popconfirm>
+                  <Button className={style.btnEdit}><Link to={`/articles/${slug}/edit`}>Edit</Link></Button>
+
+                </>
+              ) : (<span />)}
             </div>
           </div>
           <Markdown className={style.textBody}>{article.body}</Markdown>

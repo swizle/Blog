@@ -60,21 +60,15 @@ function NewArticle({ action }) {
         },
       });
 
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser) {
-        dispatch(fetchArticles(storedUser.token));
-      } else {
-        dispatch(fetchArticles());
-      }
-
+      dispatch(fetchArticles(user.token));
       if (isEditForm) {
         navigate(`/articles/${slug}`);
       } else {
         navigate('/articles');
       }
-      console.log('Успешно отправлено:', response.data);
+      console.log('Successfully sent:', response.data);
     } catch (error) {
-      console.error('Ошибка при отправке:', error);
+      console.error('Error sending:', error);
     }
   };
 

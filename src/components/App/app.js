@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   Navigate,
 } from 'react-router-dom';
 
@@ -42,61 +40,31 @@ function App() {
       </header>
       <main className={style.main}>
         <Routes>
-          <Route
-            path="/"
-            element={<List />}
-            exact
-          />
-          <Route
-            path="/articles"
-            element={<List />}
-            exact
-          />
-          <Route
-            path="/articles/:slug"
-            element={<ArticleBody />}
-            exact
-          />
+          <Route path="/">
+            <Route path="" element={<Navigate to="/articles" />} />
+            <Route path="/articles" element={<List />} exact />
+          </Route>
+          <Route path="/articles/:slug" element={<ArticleBody />} exact />
           <Route
             path="/new-article"
             element={
-              user ? (
-                <NewArticle action="create" />
-              ) : (
-                <Navigate to="/articles" />
-              )
+              user ? <NewArticle action="create" /> : <Navigate to="/articles" />
             }
             exact
           />
           <Route
             path="/articles/:slug/edit"
             element={
-              user ? (
-                <NewArticle action="edit" />
-              ) : (
-                <Navigate to="/articles" />
-              )
+              user ? <NewArticle action="edit" /> : <Navigate to="/articles" />
             }
             exact
           />
-          <Route
-            path="/sign-in"
-            element={<SignIn />}
-            exact
-          />
-          <Route
-            path="/sign-up"
-            element={<SignUp />}
-            exact
-          />
+          <Route path="/sign-in" element={<SignIn />} exact />
+          <Route path="/sign-up" element={<SignUp />} exact />
           <Route
             path="/profile"
             element={
-              user ? (
-                <Profile />
-              ) : (
-                <Navigate to="/articles" />
-              )
+              user ? <Profile /> : <Navigate to="/articles" />
             }
             exact
           />

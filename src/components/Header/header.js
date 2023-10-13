@@ -1,17 +1,13 @@
-/* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Button, Avatar } from 'antd';
-
 import { Link, useNavigate } from 'react-router-dom';
-import style from './header.module.scss';
 
+import style from './header.module.scss';
 import { logout, fetchArticles } from '../../actions';
 
 function Header() {
-  const user = useSelector((state) => state.user);
-
+  const { user } = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,19 +19,31 @@ function Header() {
 
   return (
     <section className={style.header}>
-      <Link className={style.btnMain} to="/articles">Realworld Blog</Link>
+      <Link className={style.btnMain} to="/articles">
+        Realworld Blog
+      </Link>
       <div className={style.btns}>
         {user ? (
           <div className={style.profile}>
-            <Button className={style.btnCreate}><Link to="/new-article">Create article</Link></Button>
-            <Link className={style.name} to="/profile">{user.username}</Link>
+            <Button className={style.btnCreate}>
+              <Link to="/new-article">Create article</Link>
+            </Button>
+            <Link className={style.name} to="/profile">
+              {user.username}
+            </Link>
             <Avatar className={style.icon} icon={<img src={user.image} alt="profile" />} />
-            <Button className={style.btnLogOut} onClick={handleLogout}><Link to="/">Log Out</Link></Button>
+            <Button className={style.btnLogOut} onClick={handleLogout}>
+              <Link to="/">Log Out</Link>
+            </Button>
           </div>
         ) : (
           <>
-            <Button className={style.btnSignIn} type="link"><Link to="/sign-in">Sign In</Link></Button>
-            <Button className={style.btnSignUp}><Link to="/sign-up">Sign Up</Link></Button>
+            <Button className={style.btnSignIn} type="link">
+              <Link to="/sign-in">Sign In</Link>
+            </Button>
+            <Button className={style.btnSignUp}>
+              <Link to="/sign-up">Sign Up</Link>
+            </Button>
           </>
         )}
       </div>

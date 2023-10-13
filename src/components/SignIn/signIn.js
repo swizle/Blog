@@ -1,40 +1,38 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
-
-import { Input, Button } from 'antd';
+import { Input, Button, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 
 import style from './signIn.module.scss';
-
-import { login, fetchArticles } from '../../actions';
+import { login } from '../../actions';
 
 function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { control, handleSubmit, formState: { errors } } = useForm();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    await axios.post('https://blog.kata.academy/api/users/login', {
-      user: {
-        email: data.email,
-        password: data.password,
-      },
-    })
-      .then((response) => {
-        dispatch(login(response.data.user));
-        dispatch(fetchArticles(response.data.user.token));
-        setIsLoading(false);
-        navigate('/articles');
-      })
-      .catch((error) => {
-        console.error('Ошибка входа', error);
+
+    try {
+      const response = await axios.post('https://blog.kata.academy/api/users/login', {
+        user: {
+          email: data.email,
+          password: data.password,
+        },
       });
+
+      dispatch(login(response.data.user));
+      setIsLoading(false);
+      navigate('/articles');
+    } catch (error) {
+      console.error('Error logging in', error);
+      message.error('Login or password is incorrect');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,11 +41,11 @@ function SignIn() {
         <h3 className={style.title}>Sign In</h3>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p className={`${style.email} ${style.text}`}>Email address</p>
-          <Controller
+          <RenderInput
             name="email"
             control={control}
-            defaultValue=""
+            label="Email address"
+            placeholder="Email address"
             rules={{
               required: 'Email is required',
               pattern: {
@@ -55,29 +53,22 @@ function SignIn() {
                 message: 'Invalid email address',
               },
             }}
-            render={({ field }) => (
-              <>
-                <Input {...field} className={`${style.inputEmail} ${style.input}`} placeholder="Email address" />
-                {errors.email && <p className={`${style.invalidText}`}>{errors.email && errors.email.message}</p>}
-              </>
-            )}
+            errors={errors}
           />
 
-          <p className={`${style.password} ${style.text}`}>Password</p>
-          <Controller
+          <RenderInput
             name="password"
             control={control}
-            defaultValue=""
-            rules={{ required: true }}
-            render={({ field }) => (
-              <>
-                <Input.Password {...field} className={`${style.inputPassword} ${style.input}`} placeholder="Password" />
-                {errors.password && <p className={`${style.invalidText}`}>Password is required</p>}
-              </>
-            )}
+            label="Password"
+            placeholder="Password"
+            rules={{ required: 'Password is required' }}
+            errors={errors}
+            type="password"
           />
 
-          <Button className={style.btnLogin} type="primary" htmlType="submit" loading={isLoading}>Login</Button>
+          <Button className={style.btnLogin} type="primary" htmlType="submit" loading={isLoading}>
+            Login
+          </Button>
         </form>
 
         <p className={style.dontHaveAcc}>
@@ -86,6 +77,35 @@ function SignIn() {
         </p>
       </div>
     </section>
+  );
+}
+
+function RenderInput({
+  name, control, label, placeholder, rules, errors, type,
+}) {
+  return (
+    <div>
+      <p className={`${style.text} ${style.email}`}>{label}</p>
+      <Controller
+        name={name}
+        control={control}
+        defaultValue=""
+        rules={rules}
+        render={({ field }) => (
+          <>
+            <Input
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              className={`${style.input} ${name === 'password' ? style.inputPassword : style.inputEmail}`}
+              placeholder={placeholder}
+              type={type || 'text'}
+            />
+            {errors[name] && <p className={style.invalidText}>{errors[name].message}</p>}
+          </>
+        )}
+      />
+    </div>
   );
 }
 
